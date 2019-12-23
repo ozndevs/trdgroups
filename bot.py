@@ -20,7 +20,7 @@ async def start(client, message):
 @c.on_message(Filters.command("trending") & Filters.private)
 async def trending(client, message):
     trd = generate_msg(get_trending())
-    await message.reply_text(str(trd))
+    await message.reply_text(trd)
 
 
 @c.on_message(Filters.group, group=-1)
