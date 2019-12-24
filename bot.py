@@ -1,9 +1,9 @@
-from pyrogram import Client, Filters
+from pyrogram import Client, Filters, InlineKeyboardMarkup, InlineKeyboardButton
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from db import add_point, get_trending, valid_point
 from utils import clear_db, generate_msg, migrate_chat
-from config import TOKEN, API_ID, API_HASH, TRD_CHAT
+from config import TOKEN, API_ID, API_HASH, TRD_CHAT, VERSION
 
 
 c = Client("bot", bot_token=TOKEN, api_id=API_ID, api_hash=API_HASH)
@@ -11,16 +11,52 @@ c = Client("bot", bot_token=TOKEN, api_id=API_ID, api_hash=API_HASH)
 
 @c.on_message(Filters.command("start") & Filters.private)
 async def start(client, message):
-    await message.reply_text(f"Olá **{message.from_user.first_name}** 🥳 vamos ver se seu grupo está em nosso"
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton("📖 Info", callback_data="infos")]+
+        [InlineKeyboardButton("📮 Regras", callback_data="regras")],
+        [InlineKeyboardButton("Adicionar em um grupo", url="https://t.me/trdgroupsbot?startgroup=new")]
+    ])
+    await message.reply_text(f"Olá **{message.from_user.first_name}** 🥳 vamos ver se seu grupo está em nosso "
                              "ranking semanal de interação entre os membros?\n\n"
 
-                             "Leia as regras no botão (ler as regras)")
+                             "Leia as regras no botão (ler as regras)",
+                             reply_markup=kb)
 
 
 @c.on_message(Filters.command("trending") & Filters.private)
 async def trending(client, message):
-    trd = generate_msg(get_trending())
-    await message.reply_text(trd)
+    trd = get_trending()
+    if trd:
+        msg = generate_msg(trd)
+    else:
+        msg = """**Ooops ⚠️! Fiz uma pesquisa aqui e não há dados de grupos em meu sistema, tente novamente mais tarde ou outro dia.
+
+😃👋 Obrigado (a) pela compreensão**"""
+    await message.reply_text(msg)
+
+
+@c.on_callback_query(Filters.callback_data("regras"))
+async def regras(client, message):
+    await message.message.edit_text("""📮 Regras
+
+`⭕️ Proibido Grupos que tenham spam, porno ou violência ( caso tenha um grupo desse em nosso sistema, ele poderá ser excluído sem aviso prévio)
+
+⭕️ Proibido colocar em grupos de vendas e coisas ilegais na internet
+
+⭕️ Por favor evite chamar os administradores do bot no privado sem motivo! Sabendo que o bot já tem o` @SuporteBuilderBot `ele fica 24/7 aberto`
+
+**📌 OBS:** __as regras serão adicionadas conforme o tempo for passando :)__
+
+**Obrigado por ser um colaborador de nosso bot 🥰**""")
+
+
+@c.on_callback_query(Filters.callback_data("infos"))
+async def infos(client, message):
+    await message.message.edit_text(f"""Nome: Trending Groups
+User: @trdgroupsbot
+Versão: {VERSION}
+Devs: AMANOTEAM
+Org: OZN""")
 
 
 @c.on_message(Filters.group, group=-1)

@@ -3,3 +3,5 @@ TOKEN = "SEU:TOKEN"
 TRD_CHAT = "@username" do canal ou id
 API_ID = SUA_API_ID
 API_HASH = "SUA_API_HASH"
+
+VERSION = open("version.txt").read().rstrip()
