@@ -64,7 +64,7 @@ async def process_msg(client, message):
     if message.migrate_from_chat_id:
         migrate_chat(message.migrate_from_chat_id, message.chat.id)
     elif not message.service and valid_point(message.chat.id, message.from_user.id, message.date):
-        if message.reply_to_message:
+        if message.reply_to_message and not message.reply_to_message.from_user.is_bot and message.from_user.id != message.reply_to_message.from_user.id:
             count = 2
         else:
             count = 1
