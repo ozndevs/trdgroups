@@ -17,7 +17,7 @@ def generate_msg(sql_chats):
 
 
 def clear_db():
-    cur.execute("DELETE FROM trd_groups")
+    cur.execute("DELETE FROM trd_chats")
     con.commit()
 
 
