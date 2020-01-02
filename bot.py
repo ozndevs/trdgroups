@@ -71,14 +71,35 @@ async def process_msg(client, message):
         add_point(message.chat.id, message.chat.title, count)
 
 
+async def send_trending_msg(chat):
+    # [0] = title, [1] = id, [2] = points
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton("👀 Ver o ranking", url="https://t.me/trdgroups")]
+    ])
+    try:
+        await c.send_message(chat[1], f"""**Wooow 😯!** {chat[0]} Acabei de postar o ranking no meu canal, bora ver se esse grupo está nós tops?
+
+Aperte no botão abaixo (👀 Ver o ranking)""", reply_markup=kb)
+    except:
+        return False
+    else:
+        return True
+
+
 async def daily_trendings():
-    msg = generate_msg(get_trending())
+    trd = get_trending()
+    msg = generate_msg(trd)
     await c.send_message(TRD_CHAT, msg)
+    for chat in trd:
+        await send_trending_msg(chat)
 
 async def weekly_trendings():
-    msg = generate_msg(get_trending())
+    trd = get_trending()
+    msg = generate_msg(trd)
     clear_db()
     await c.send_message(TRD_CHAT, msg)
+    for chat in trd:
+        await send_trending_msg(chat)
 
 
 scheduler = AsyncIOScheduler()
