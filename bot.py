@@ -50,8 +50,7 @@ async def regras(client, message):
     await message.message.edit_text("""📮 Regras
 
 `⭕️ Proibido grupos que tenham spam, pornô ou violência
-⭕️ Proibido adicionar o bot em grupos de vendas ou coisas ilegais
-⭕️ Por favor evite chamar os administradores do bot no privado! Já existe o` @SuporteBuilderBot `para isso. Ele fica 24/7 aberto.`
+⭕️ Proibido adicionar o bot em grupos de vendas ou coisas ilegais`
 
 Caso tenha um grupo desses em nosso sistema, ele poderá ser excluído do mesmo sem aviso prévio.
 
@@ -70,7 +69,10 @@ async def infos(client, message):
 User: @trdgroupsbot
 Versão: {VERSION}
 Devs: AMANOTEAM
-Org: OZN""", reply_markup=kb)
+Org: OZN
+
+OBS: Caso você precice de ajuda para usar o bot, sinta-se à vontade para nos contatar pelo @SuporteBuilderBot.""",
+                                    reply_markup=kb)
 
 
 @c.on_message(Filters.group, group=-1)
