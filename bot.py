@@ -86,7 +86,7 @@ Comandos:
 `/settings` - Envia o menu de configurações do grupo. (Somente admin)
 `/trending` - Envia o top 10 de chats no bot. (Somente no privado)
 
-OBS: Caso você precice de ajuda para usar o bot, sinta-se à vontade para nos contatar pelo @SuporteBuilderBot."""
+OBS: Caso você precise de ajuda para usar o bot, sinta-se à vontade para nos contatar pelo @SuporteBuilderBot."""
 
     await message.message.edit_text(text, reply_markup=kb)
 
