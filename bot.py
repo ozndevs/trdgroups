@@ -18,7 +18,8 @@ async def start(client, message):
         send = message.reply_text
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("📖 Info", callback_data="infos")]+
-        [InlineKeyboardButton("📮 Regras", callback_data="regras")],
+        [InlineKeyboardButton("📮 Regras", callback_data="rules")],
+        [InlineKeyboardButton("📕 Ajuda", callback_data="help")]+
         [InlineKeyboardButton("Adicionar em um grupo", url="https://t.me/trdgroupsbot?startgroup=new")]
     ])
 
@@ -41,7 +42,7 @@ async def trending(client, message):
     await message.reply_text(msg)
 
 
-@c.on_callback_query(Filters.callback_data("regras"))
+@c.on_callback_query(Filters.callback_data("rules"))
 async def regras(client, message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("« Voltar", callback_data="start_back")]
@@ -69,10 +70,25 @@ async def infos(client, message):
 User: @trdgroupsbot
 Versão: {VERSION}
 Devs: AMANOTEAM
-Org: OZN
-
-OBS: Caso você precice de ajuda para usar o bot, sinta-se à vontade para nos contatar pelo @SuporteBuilderBot.""",
+Org: OZN""",
                                     reply_markup=kb)
+
+
+@c.on_callback_query(Filters.callback_data("help"))
+async def help(client, message):
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton("« Voltar", callback_data="start_back")]
+    ])
+
+    text = """📕 Ajuda
+
+Comandos:
+`/settings` - Envia o menu de configurações do grupo. (Somente admin)
+`/trending` - Envia o top 10 de chats no bot. (Somente no privado)
+
+OBS: Caso você precice de ajuda para usar o bot, sinta-se à vontade para nos contatar pelo @SuporteBuilderBot."""
+
+    await message.message.edit_text(text, reply_markup=kb)
 
 
 @c.on_message(Filters.group | Filters.migrate_from_chat_id, group=-1)
