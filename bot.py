@@ -75,11 +75,11 @@ OBS: Caso você precice de ajuda para usar o bot, sinta-se à vontade para nos c
                                     reply_markup=kb)
 
 
-@c.on_message(Filters.group, group=-1)
+@c.on_message(Filters.group | Filters.migrate_from_chat_id, group=-1)
 async def process_msg(client, message):
     if message.migrate_from_chat_id:
         migrate_chat(message.migrate_from_chat_id, message.chat.id)
-    elif not message.service and valid_point(message.chat.id, message.from_user.id, message.date):
+    elif valid_point(message.chat.id, message.from_user.id, message.date):
         if message.reply_to_message and not message.reply_to_message.from_user.is_bot and message.from_user.id != message.reply_to_message.from_user.id:
             count = 2
         else:
