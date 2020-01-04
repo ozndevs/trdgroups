@@ -1,4 +1,4 @@
-from pyrogram import Client, Filters, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram import Client, Filters, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from db import add_point, get_trending, valid_point
@@ -10,17 +10,23 @@ c = Client("bot", bot_token=TOKEN, api_id=API_ID, api_hash=API_HASH)
 
 
 @c.on_message(Filters.command("start") & Filters.private)
+@c.on_callback_query(Filters.callback_data("start_back"))
 async def start(client, message):
+    if isinstance(message, CallbackQuery):
+        send = message.message.edit_text
+    else:
+        send = message.reply_text
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("📖 Info", callback_data="infos")]+
         [InlineKeyboardButton("📮 Regras", callback_data="regras")],
         [InlineKeyboardButton("Adicionar em um grupo", url="https://t.me/trdgroupsbot?startgroup=new")]
     ])
-    await message.reply_text(f"Olá **{message.from_user.first_name}** 🥳 vamos ver se seu grupo está em nosso "
-                             "ranking semanal de interação entre os membros?\n\n"
 
-                             "Leia as regras no botão (ler as regras)",
-                             reply_markup=kb)
+    await send(f"Olá **{message.from_user.first_name}** 🥳 vamos ver se seu grupo está em nosso "
+               "ranking semanal de interação entre os membros?\n\n"
+
+               "Leia as regras no botão (ler as regras)",
+                reply_markup=kb)
 
 
 @c.on_message(Filters.command("trending") & Filters.private)
@@ -37,26 +43,34 @@ async def trending(client, message):
 
 @c.on_callback_query(Filters.callback_data("regras"))
 async def regras(client, message):
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton("« Voltar", callback_data="start_back")]
+    ])
+
     await message.message.edit_text("""📮 Regras
 
-`⭕️ Proibido Grupos que tenham spam, porno ou violência ( caso tenha um grupo desse em nosso sistema, ele poderá ser excluído sem aviso prévio)
+`⭕️ Proibido grupos que tenham spam, pornô ou violência
+⭕️ Proibido adicionar o bot em grupos de vendas ou coisas ilegais
+⭕️ Por favor evite chamar os administradores do bot no privado! Já existe o` @SuporteBuilderBot `para isso. Ele fica 24/7 aberto.`
 
-⭕️ Proibido colocar em grupos de vendas e coisas ilegais na internet
+Caso tenha um grupo desses em nosso sistema, ele poderá ser excluído do mesmo sem aviso prévio.
 
-⭕️ Por favor evite chamar os administradores do bot no privado sem motivo! Sabendo que o bot já tem o` @SuporteBuilderBot `ele fica 24/7 aberto`
+**📌 OBS:** __Novas regras poderão ser adicionadas conforme o tempo for passando :)__
 
-**📌 OBS:** __as regras serão adicionadas conforme o tempo for passando :)__
-
-**Obrigado por ser um colaborador de nosso bot 🥰**""")
+**Obrigado por ser um colaborador do nosso bot 🥰**""", reply_markup=kb)
 
 
 @c.on_callback_query(Filters.callback_data("infos"))
 async def infos(client, message):
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton("« Voltar", callback_data="start_back")]
+    ])
+
     await message.message.edit_text(f"""Nome: Trending Groups
 User: @trdgroupsbot
 Versão: {VERSION}
 Devs: AMANOTEAM
-Org: OZN""")
+Org: OZN""", reply_markup=kb)
 
 
 @c.on_message(Filters.group, group=-1)
