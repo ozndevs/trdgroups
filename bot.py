@@ -127,7 +127,7 @@ async def rank(client, message):
     trd = get_trending(999999999)
     for pos, chat in enumerate(trd):
         if chat[1] == message.chat.id:
-            return await message.reply_text(f"Este grupo está na posição {pos + 1} de acordo com os meus sistemas.")
+            return await message.reply_text(f"Este grupo está na posição `{pos + 1}`, com `{chat[2]}` pontos de acordo com o meu sistema.")
     else:
         return await message.reply_text(f"Este grupo ainda não tem dados de pontuação aqui.")
 
