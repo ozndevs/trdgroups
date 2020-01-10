@@ -7,7 +7,11 @@ cur = con.cursor()
 cur.execute('''CREATE TABLE IF NOT EXISTS trd_chats (chat_id INTEGER,
                                                      chat_title,
                                                      chat_points INTEGER,
-                                                     chat_lang)''')
+                                                     chat_lang,
+                                                     is_banned INTEGER,
+                                                     notifications_optin INTEGER,
+                                                     link_optin INTEGER,
+                                                     chat_link)''')
 
 cur.execute('''CREATE TABLE IF NOT EXISTS flood_ctl (chat_id INTEGER,
                                                      user_id INTEGER,
@@ -39,13 +43,23 @@ def valid_point(chat_id, user_id, timestamp):
 
 def add_point(chat_id, chat_title, count=1):
     if chat_exists(chat_id):
-        cur.execute("UPDATE trd_chats SET chat_title = ?, chat_points = chat_points + ? WHERE chat_id = ?", (chat_title, count, chat_id))
+        cur.execute("UPDATE trd_chats SET chat_title = ?, chat_points = chat_points + ? WHERE chat_id = ? AND is_banned = ?", (chat_title, count, chat_id, 0))
         con.commit()
     else:
-        cur.execute("INSERT INTO trd_chats (chat_id, chat_title, chat_points) VALUES (?,?,?)", (chat_id, chat_title, count))
+        cur.execute("INSERT INTO trd_chats (chat_id, chat_title, chat_points, notifications_optin, is_banned) VALUES (?,?,?,?,?)", (chat_id, chat_title, count, 1, 0))
         con.commit()
 
 
 def get_trending(max_chats=10):
-    cur.execute("SELECT chat_title, chat_id, chat_points FROM trd_chats ORDER BY chat_points DESC LIMIT ?", (max_chats,))
+    cur.execute("SELECT chat_title, chat_id, chat_points, notifications_optin FROM trd_chats WHERE chat_points > ? and is_banned = 0 ORDER BY chat_points DESC LIMIT ?", (0, max_chats))
     return cur.fetchall()
+
+
+def get_configs(chat_id: int):
+    cur.execute("SELECT chat_title, chat_points, link_optin, chat_link, notifications_optin FROM trd_chats WHERE chat_id = ?", (chat_id,))
+    res = cur.fetchone()
+    return dict(title=res[0], points=res[1], link_optin=res[2], link=res[3], notifications_optin=res[4])
+
+
+def change_configs(chat_id: int, config_name: str, value: str or int):
+    cur.execute(f"UPDATE trd_chats SET {config_name} = ? WHERE chat_id = ?", (value, chat_id))

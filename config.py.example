@@ -1,5 +1,6 @@
 TOKEN = "SEU:TOKEN"
 
+SUDOERS = [200097591, 945971280]
 TRD_CHAT = "@username" do canal ou id
 API_ID = SUA_API_ID
 API_HASH = "SUA_API_HASH"
