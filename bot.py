@@ -28,8 +28,8 @@ async def start(client, message):
         send = message.reply_text
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("📖 Info", callback_data="infos")]+
-        [InlineKeyboardButton("📮 Regras", callback_data="rules")],
-        [InlineKeyboardButton("📕 Ajuda", callback_data="help")]+
+        [InlineKeyboardButton("📮 Regras", callback_data="rules")]+
+        [InlineKeyboardButton("📕 Ajuda", callback_data="help")],
         [InlineKeyboardButton("Adicionar em um grupo", url="https://t.me/trdgroupsbot?startgroup=new")]
     ])
 
