@@ -62,7 +62,7 @@ async def trending(client, message):
     else:
         send = message.reply_text
 
-    await send(msg, reply_markup=kb)
+    await send(msg, reply_markup=kb, disable_web_page_preview=True)
 
 
 @c.on_message(Filters.command("banchat", "!") & Filters.user(SUDOERS))
@@ -122,12 +122,19 @@ async def settings(client, message):
             await message.reply_text("Eu enviei uma mensagem privada com as configs deste grupo.")
 
 
-@c.on_message(Filters.command("rank") & Filters.group)
+@c.on_message(Filters.command(["rank", "stats"]) & Filters.group)
 async def rank(client, message):
     trd = get_trending(999999999)
     for pos, chat in enumerate(trd):
         if chat[1] == message.chat.id:
-            return await message.reply_text(f"Este grupo está na posição `{pos + 1}`, com `{chat[2]}` pontos de acordo com o meu sistema.")
+            msg = f"""**📊 Rank Stats
+
+👥 Grupo:** `{message.chat.title}`
+**🏆 Posição:** `{pos + 1}`
+**👓 Pontuação:** `{chat[2]}`
+
+**📌 Essas são as informações da rank do grupo de acordo com o meu banco de dados.**"""
+            return await message.reply_text(msg)
     else:
         return await message.reply_text(f"Este grupo ainda não tem dados de pontuação aqui.")
 
@@ -139,7 +146,7 @@ async def notify_help(client, message):
 
 @c.on_callback_query(Filters.callback_data("linkchat_help"))
 async def linkchat_help(client, message):
-    await message.answer("🔗 Linkar grupo\n\nEsta configuração define se o bot deve incluir um link para o grupo caso ele aparecer nos trendings.", show_alert=True)
+    await message.answer("🔗 Linkar grupo\n\nEsta configuração define se o bot deve incluir um link (público) para o grupo caso ele aparecer nos trendings.", show_alert=True)
 
 
 @c.on_callback_query(callback_starts("notify_status"))
@@ -221,7 +228,7 @@ async def help(client, message):
     text = """📕 Ajuda
 
 Comandos:
-`/rank` - Envia a posição atual de um grupo. (Somente em grupos)
+`/stats` - Envia as estatísticas de um grupo. (Somente no grupo)
 `/settings` - Envia o menu de configurações do grupo. (Somente admin)
 `/trending` - Envia o top 10 de chats no bot. (Somente no privado)
 
@@ -239,11 +246,11 @@ async def process_msg(client, message):
             count = 2
         else:
             count = 1
-        add_point(message.chat.id, message.chat.title, count)
+        add_point(message.chat.id, message.chat.title, message.chat.username, count)
 
 
 async def send_trending_msg(chat):
-    # [0] = title, [1] = id, [2] = points, [3] = notifications_optin
+    # [0] = title, [1] = id, [2] = points, [3] = notifications_optin, [4] = link_optin, [5] = chat_link
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("👀 Ver o ranking", url="https://t.me/trdgroups")]
     ])
@@ -269,7 +276,7 @@ async def weekly_trendings():
     trd = get_trending()
     msg = generate_msg(trd)
     clear_db()
-    await c.send_message(TRD_CHAT, msg)
+    await c.send_message(TRD_CHAT, msg, disable_web_page_preview=True)
     for chat in trd:
         await send_trending_msg(chat)
 

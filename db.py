@@ -41,17 +41,17 @@ def valid_point(chat_id, user_id, timestamp):
         return True
 
 
-def add_point(chat_id, chat_title, count=1):
+def add_point(chat_id, chat_title, chat_link=None, count=1):
     if chat_exists(chat_id):
-        cur.execute("UPDATE trd_chats SET chat_title = ?, chat_points = chat_points + ? WHERE chat_id = ? AND is_banned = ?", (chat_title, count, chat_id, 0))
+        cur.execute("UPDATE trd_chats SET chat_title = ?, chat_link = ?, chat_points = chat_points + ? WHERE chat_id = ? AND is_banned = ?", (chat_title, chat_link, count, chat_id, 0))
         con.commit()
     else:
-        cur.execute("INSERT INTO trd_chats (chat_id, chat_title, chat_points, notifications_optin, is_banned) VALUES (?,?,?,?,?)", (chat_id, chat_title, count, 1, 0))
+        cur.execute("INSERT INTO trd_chats (chat_id, chat_title, chat_link, chat_points, notifications_optin, is_banned) VALUES (?,?,?,?,?,?)", (chat_id, chat_title, chat_link, count, 1, 0))
         con.commit()
 
 
-def get_trending(max_chats=10):
-    cur.execute("SELECT chat_title, chat_id, chat_points, notifications_optin FROM trd_chats WHERE chat_points > ? and is_banned = 0 ORDER BY chat_points DESC LIMIT ?", (0, max_chats))
+def get_trending(max_chats=15):
+    cur.execute("SELECT chat_title, chat_id, chat_points, notifications_optin, link_optin, chat_link FROM trd_chats WHERE chat_points > ? and is_banned = 0 ORDER BY chat_points DESC LIMIT ?", (0, max_chats))
     return cur.fetchall()
 
 
@@ -63,3 +63,4 @@ def get_configs(chat_id: int):
 
 def change_configs(chat_id: int, config_name: str, value: str or int):
     cur.execute(f"UPDATE trd_chats SET {config_name} = ? WHERE chat_id = ?", (value, chat_id))
+    con.commit()
