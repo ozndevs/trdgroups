@@ -268,7 +268,7 @@ Aperte no botão abaixo (👀 Ver o ranking)""", reply_markup=kb)
 async def daily_trendings():
     trd = get_trending()
     msg = generate_msg(trd)
-    await c.send_message(TRD_CHAT, msg)
+    await c.send_message(TRD_CHAT, msg, disable_web_page_preview=True)
     for chat in trd:
         await send_trending_msg(chat)
 
