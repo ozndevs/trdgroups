@@ -1,11 +1,11 @@
-from pyrogram import Client, Filters, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from distutils.util import strtobool
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from pyrogram import Client, Filters, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+
+from config import TOKEN, API_ID, API_HASH, TRD_CHAT, VERSION, SUDOERS
 from db import add_point, get_trending, valid_point, get_configs, change_configs
 from utils import clear_db, generate_msg, migrate_chat, callback_starts, get_switch
-from config import TOKEN, API_ID, API_HASH, TRD_CHAT, VERSION, SUDOERS
-
 
 c = Client("bot", bot_token=TOKEN, api_id=API_ID, api_hash=API_HASH)
 
@@ -27,8 +27,8 @@ async def start(client, message):
     else:
         send = message.reply_text
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton("📖 Info", callback_data="infos")]+
-        [InlineKeyboardButton("📮 Regras", callback_data="rules")]+
+        [InlineKeyboardButton("📖 Info", callback_data="infos")] +
+        [InlineKeyboardButton("📮 Regras", callback_data="rules")] +
         [InlineKeyboardButton("📕 Ajuda", callback_data="help")],
         [InlineKeyboardButton("Adicionar em um grupo", url="https://t.me/trdgroupsbot?startgroup=new")]
     ])
@@ -37,7 +37,7 @@ async def start(client, message):
                "ranking semanal de interação entre os membros?\n\n"
 
                "Leia as regras no botão (ler as regras)",
-                reply_markup=kb)
+               reply_markup=kb)
 
 
 @c.on_message(Filters.command("trending") & Filters.private)
@@ -79,7 +79,8 @@ async def banchat(client, message):
         await m.edit_text(str(e))
     else:
         change_configs(chat.id, "is_banned", True)
-        await m.edit_text(f"Chat {chat.title} (`{chat.id}`) banido com sucesso. Seus pontos não irão ser contados mais e não serão exibidos nos trendings.")
+        await m.edit_text(
+            f"Chat {chat.title} (`{chat.id}`) banido com sucesso. Seus pontos não irão ser contados mais e não serão exibidos nos trendings.")
 
 
 @c.on_message(Filters.command("unbanchat", "!") & Filters.user(SUDOERS))
@@ -99,19 +100,21 @@ async def banchat(client, message):
         await m.edit_text(f"Chat {chat.title} (`{chat.id}`) desbanido com sucesso.")
 
 
-
 @c.on_message(Filters.command("settings") & Filters.group)
 async def settings(client, message):
     configs = get_configs(message.chat.id)
     if await is_admin(message.chat.id, message.from_user.id):
         try:
             kb = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton("🛎 Notificar", callback_data="notify_help")]+
-                [InlineKeyboardButton(get_switch(configs["notifications_optin"]), callback_data=f"notify_status {message.chat.id} {not configs['notifications_optin']}")],
-                [InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help")]+
-                [InlineKeyboardButton(get_switch(configs["link_optin"]), callback_data=f"linkchat_status {message.chat.id} {not configs['link_optin']}")]
+                [InlineKeyboardButton("🛎 Notificar", callback_data="notify_help")] +
+                [InlineKeyboardButton(get_switch(configs["notifications_optin"]),
+                                      callback_data=f"notify_status {message.chat.id} {not configs['notifications_optin']}")],
+                [InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help")] +
+                [InlineKeyboardButton(get_switch(configs["link_optin"]),
+                                      callback_data=f"linkchat_status {message.chat.id} {not configs['link_optin']}")]
             ])
-            await client.send_message(message.from_user.id, f"Painel de controle para o grupo {configs['title']}", reply_markup=kb)
+            await client.send_message(message.from_user.id, f"Painel de controle para o grupo {configs['title']}",
+                                      reply_markup=kb)
         except:
             kb = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton("🤖 Iniciar conversa", url="https://t.me/trdgroupsbot")]
@@ -141,12 +144,16 @@ async def rank(client, message):
 
 @c.on_callback_query(Filters.callback_data("notify_help"))
 async def notify_help(client, message):
-    await message.answer("🛎 Notificar\n\nEsta configuração define se o bot deve enviar uma mensagem no grupo caso o mesmo estiver no top 10 dos trendings.", show_alert=True)
+    await message.answer(
+        "🛎 Notificar\n\nEsta configuração define se o bot deve enviar uma mensagem no grupo caso o mesmo estiver no top 10 dos trendings.",
+        show_alert=True)
 
 
 @c.on_callback_query(Filters.callback_data("linkchat_help"))
 async def linkchat_help(client, message):
-    await message.answer("🔗 Linkar grupo\n\nEsta configuração define se o bot deve incluir um link (público) para o grupo caso ele aparecer nos trendings.", show_alert=True)
+    await message.answer(
+        "🔗 Linkar grupo\n\nEsta configuração define se o bot deve incluir um link (público) para o grupo caso ele aparecer nos trendings.",
+        show_alert=True)
 
 
 @c.on_callback_query(callback_starts("notify_status"))
@@ -159,13 +166,15 @@ async def notify_status(client, message):
     configs = get_configs(chat)
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton("🛎 Notificar", callback_data="notify_help")]+
-        [InlineKeyboardButton(get_switch(configs["notifications_optin"]), callback_data=f"notify_status {chat} {not configs['notifications_optin']}")],
-        [InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help")]+
-        [InlineKeyboardButton(get_switch(configs["link_optin"]), callback_data=f"linkchat_status {chat} {not configs['link_optin']}")]
+        [InlineKeyboardButton("🛎 Notificar", callback_data="notify_help")] +
+        [InlineKeyboardButton(get_switch(configs["notifications_optin"]),
+                              callback_data=f"notify_status {chat} {not configs['notifications_optin']}")],
+        [InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help")] +
+        [InlineKeyboardButton(get_switch(configs["link_optin"]),
+                              callback_data=f"linkchat_status {chat} {not configs['link_optin']}")]
     ])
 
-    await message.message.edit_text("Painel de controle para o grupo "+configs["title"], reply_markup=kb)
+    await message.message.edit_text("Painel de controle para o grupo " + configs["title"], reply_markup=kb)
 
 
 @c.on_callback_query(callback_starts("linkchat_status"))
@@ -178,13 +187,15 @@ async def linkchat_status(client, message):
     configs = get_configs(chat)
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton("🛎 Notificar", callback_data="notify_help")]+
-        [InlineKeyboardButton(get_switch(configs["notifications_optin"]), callback_data=f"notify_status {chat} {not configs['notifications_optin']}")],
-        [InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help")]+
-        [InlineKeyboardButton(get_switch(configs["link_optin"]), callback_data=f"linkchat_status {chat} {not configs['link_optin']}")]
+        [InlineKeyboardButton("🛎 Notificar", callback_data="notify_help")] +
+        [InlineKeyboardButton(get_switch(configs["notifications_optin"]),
+                              callback_data=f"notify_status {chat} {not configs['notifications_optin']}")],
+        [InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help")] +
+        [InlineKeyboardButton(get_switch(configs["link_optin"]),
+                              callback_data=f"linkchat_status {chat} {not configs['link_optin']}")]
     ])
 
-    await message.message.edit_text("Painel de controle para o grupo "+configs["title"], reply_markup=kb)
+    await message.message.edit_text("Painel de controle para o grupo " + configs["title"], reply_markup=kb)
 
 
 @c.on_callback_query(Filters.callback_data("rules"))
@@ -256,7 +267,8 @@ async def send_trending_msg(chat):
     ])
     if chat[3]:
         try:
-            await c.send_message(chat[1], f"""Olá **{chat[0]}**, acabei de postar o ranking no meu canal. Vamos ver em qual posição esse grupo ficou? 🤔
+            await c.send_message(chat[1],
+                                 f"""Olá **{chat[0]}**, acabei de postar o ranking no meu canal. Vamos ver em qual posição esse grupo ficou? 🤔
 
 Se você quiser ver o ranking, clique no botão abaixo:""", reply_markup=kb)
         except:
@@ -271,6 +283,7 @@ async def daily_trendings():
     await c.send_message(TRD_CHAT, msg, disable_web_page_preview=True)
     for chat in trd:
         await send_trending_msg(chat)
+
 
 async def weekly_trendings():
     trd = get_trending()
