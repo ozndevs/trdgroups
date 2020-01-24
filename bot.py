@@ -230,7 +230,7 @@ async def help(client, message):
 Comandos:
 `/stats` - Envia as estatísticas de um grupo. (Somente no grupo)
 `/settings` - Envia o menu de configurações do grupo. (Somente admin)
-`/trending` - Envia o top 10 de chats no bot. (Somente no privado)
+`/trending` - Envia os top 15 chats no bot. (Somente no privado)
 
 OBS: Caso você precise de ajuda para usar o bot, sinta-se à vontade para nos contatar pelo @SuporteBuilderBot."""
 
@@ -252,13 +252,13 @@ async def process_msg(client, message):
 async def send_trending_msg(chat):
     # [0] = title, [1] = id, [2] = points, [3] = notifications_optin, [4] = link_optin, [5] = chat_link
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton("👀 Ver o ranking", url="https://t.me/trdgroups")]
+        [InlineKeyboardButton("Ver o ranking", url="https://t.me/trdgroups")]
     ])
     if chat[3]:
         try:
-            await c.send_message(chat[1], f"""**Wooow 😯!** {chat[0]} Acabei de postar o ranking no meu canal, bora ver em qual posição este grupo ficou?
+            await c.send_message(chat[1], f"""Olá **{chat[0]}**, acabei de postar o ranking no meu canal. Vamos ver em qual posição esse grupo ficou? 🤔
 
-Aperte no botão abaixo (👀 Ver o ranking)""", reply_markup=kb)
+Se você quiser ver o ranking, clique no botão abaixo:""", reply_markup=kb)
         except:
             return False
         else:
