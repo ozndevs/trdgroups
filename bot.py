@@ -30,13 +30,30 @@ async def start(client, message):
         [InlineKeyboardButton("📖 Info", callback_data="infos")] +
         [InlineKeyboardButton("📮 Regras", callback_data="rules")] +
         [InlineKeyboardButton("📕 Ajuda", callback_data="help")],
-        [InlineKeyboardButton("Adicionar em um grupo", url="https://t.me/trdgroupsbot?startgroup=new")]
+        [InlineKeyboardButton("Adicionar em um grupo", url="https://t.me/trdgroupsbot?startgroup=new")] +
+        [InlineKeyboardButton("🌟 Avaliar", callback_data="rate_bot")]
     ])
 
-    await send(f"Olá **{message.from_user.first_name}** 🥳 vamos ver se seu grupo está em nosso "
-               "ranking semanal de interação entre os membros?\n\n"
+    await send(f"Olá **{message.from_user.first_name}** 🥳 vamos ver se seu grupo estará em nosso "
+                "ranking semanal de interação entre os membros?\n\n"
 
-               "Leia as regras no botão (ler as regras)",
+                "Leia as regras no botão abaixo (📮 Regras)",
+               reply_markup=kb)
+
+
+@c.on_callback_query(Filters.callback_data("rate_bot"))
+async def rate_bot(client, message):
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton("🙂 Bom", callback_data="rate_callback good")] +
+        [InlineKeyboardButton("🤩 Ótimo", callback_data="rate_callback awesome")] +
+        [InlineKeyboardButton("😕 Razoável", callback_data="rate_callback reasonable")] +
+        [InlineKeyboardButton("😖 Péssimo", callback_data="rate_callback terrible")],
+        [InlineKeyboardButton("« Voltar", callback_data="start_back")]
+    ])
+
+    await message.message.edit_text(f"Olá **{message.from_user.first_name}** 👋😁! Nós da equipe do **Trending Groups** queremos saber o quanto você está satisfeito com o nosso bot 🤔\n\n"
+
+                "Avalie ele clicando no botão abaixo e depois faça uma resenha sobre o nível de satisfação que você teve com as funções do **Trending Groups** 🙂",
                reply_markup=kb)
 
 
@@ -243,7 +260,7 @@ Comandos:
 `/settings` - Envia o menu de configurações do grupo. (Somente admin)
 `/trending` - Envia os top 15 chats no bot. (Somente no privado)
 
-OBS: Caso você precise de ajuda para usar o bot, sinta-se à vontade para nos contatar pelo @SuporteBuilderBot."""
+OBS: Caso você precise de ajuda para usar o bot, sinta-se à vontade para nos contatar pelo @trdsuportebot."""
 
     await message.message.edit_text(text, reply_markup=kb)
 
