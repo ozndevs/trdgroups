@@ -242,7 +242,7 @@ async def infos(client, message):
     await message.message.edit_text(f"""Nome: Trending Groups
 User: @trdgroupsbot
 Versão: {VERSION}
-Devs: AMANOTEAM
+Dev: @alissonlauffer
 Org: OZN""",
                                     reply_markup=kb)
 
