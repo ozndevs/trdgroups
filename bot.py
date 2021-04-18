@@ -29,16 +29,18 @@ async def start(client, message):
         send = message.reply_text
     kb = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton("📖 Info", callback_data="infos")]
-            + [InlineKeyboardButton("📮 Regras", callback_data="rules")]
-            + [InlineKeyboardButton("📕 Ajuda", callback_data="help")],
+            [
+                InlineKeyboardButton("📖 Info", callback_data="infos"),
+                InlineKeyboardButton("📮 Regras", callback_data="rules"),
+                InlineKeyboardButton("📕 Ajuda", callback_data="help"),
+            ],
             [
                 InlineKeyboardButton(
                     "Adicionar em um grupo",
                     url="https://t.me/trdgroupsbot?startgroup=new",
-                )
-            ]
-            + [InlineKeyboardButton("🌟 Avaliar", callback_data="rate_bot")],
+                ),
+                InlineKeyboardButton("🌟 Avaliar", callback_data="rate_bot"),
+            ],
         ]
     )
 
@@ -54,17 +56,15 @@ async def start(client, message):
 async def rate_bot(client, message):
     kb = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton("🙂 Bom", callback_data="rate_callback good")]
-            + [InlineKeyboardButton("🤩 Ótimo", callback_data="rate_callback awesome")]
-            + [
+            [
+                InlineKeyboardButton("🙂 Bom", callback_data="rate_callback good"),
+                InlineKeyboardButton("🤩 Ótimo", callback_data="rate_callback awesome"),
                 InlineKeyboardButton(
                     "😕 Razoável", callback_data="rate_callback reasonable"
-                )
-            ]
-            + [
+                ),
                 InlineKeyboardButton(
                     "😖 Péssimo", callback_data="rate_callback terrible"
-                )
+                ),
             ],
             [InlineKeyboardButton("« Voltar", callback_data="start_back")],
         ]
@@ -147,23 +147,23 @@ async def settings(client, message):
         try:
             kb = InlineKeyboardMarkup(
                 inline_keyboard=[
-                    [InlineKeyboardButton("🛎 Notificar", callback_data="notify_help")]
-                    + [
+                    [
+                        InlineKeyboardButton(
+                            "🛎 Notificar", callback_data="notify_help"
+                        ),
                         InlineKeyboardButton(
                             get_switch(configs["notifications_optin"]),
                             callback_data=f"notify_status {message.chat.id} {not configs['notifications_optin']}",
-                        )
+                        ),
                     ],
                     [
                         InlineKeyboardButton(
                             "🔗 Linkar grupo", callback_data="linkchat_help"
-                        )
-                    ]
-                    + [
+                        ),
                         InlineKeyboardButton(
                             get_switch(configs["link_optin"]),
                             callback_data=f"linkchat_status {message.chat.id} {not configs['link_optin']}",
-                        )
+                        ),
                     ],
                 ]
             )
@@ -238,19 +238,19 @@ async def notify_status(client, message):
 
     kb = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton("🛎 Notificar", callback_data="notify_help")]
-            + [
+            [
+                InlineKeyboardButton("🛎 Notificar", callback_data="notify_help"),
                 InlineKeyboardButton(
                     get_switch(configs["notifications_optin"]),
                     callback_data=f"notify_status {chat} {not configs['notifications_optin']}",
-                )
+                ),
             ],
-            [InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help")]
-            + [
+            [
+                InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help"),
                 InlineKeyboardButton(
                     get_switch(configs["link_optin"]),
                     callback_data=f"linkchat_status {chat} {not configs['link_optin']}",
-                )
+                ),
             ],
         ]
     )
@@ -271,19 +271,19 @@ async def linkchat_status(client, message):
 
     kb = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton("🛎 Notificar", callback_data="notify_help")]
-            + [
+            [
+                InlineKeyboardButton("🛎 Notificar", callback_data="notify_help"),
                 InlineKeyboardButton(
                     get_switch(configs["notifications_optin"]),
                     callback_data=f"notify_status {chat} {not configs['notifications_optin']}",
-                )
+                ),
             ],
-            [InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help")]
-            + [
+            [
+                InlineKeyboardButton("🔗 Linkar grupo", callback_data="linkchat_help"),
                 InlineKeyboardButton(
                     get_switch(configs["link_optin"]),
                     callback_data=f"linkchat_status {chat} {not configs['link_optin']}",
-                )
+                ),
             ],
         ]
     )
