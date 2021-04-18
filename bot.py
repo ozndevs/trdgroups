@@ -6,7 +6,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQ
 
 from config import TOKEN, API_ID, API_HASH, TRD_CHAT, VERSION, SUDOERS
 from db import add_point, get_trending, valid_point, get_configs, change_configs
-from utils import clear_db, generate_msg, migrate_chat, callback_starts, get_switch
+from utils import clear_db, generate_msg, migrate_chat, get_switch
 
 c = Client("bot", bot_token=TOKEN, api_id=API_ID, api_hash=API_HASH)
 
@@ -174,7 +174,7 @@ async def linkchat_help(client, message):
         show_alert=True)
 
 
-@c.on_callback_query(callback_starts("notify_status"))
+@c.on_callback_query(filters.regex("^notify_status"))
 async def notify_status(client, message):
     _, chat, new_status = message.data.split()
     chat = int(chat)
@@ -195,7 +195,7 @@ async def notify_status(client, message):
     await message.message.edit_text("Painel de controle para o grupo " + configs["title"], reply_markup=kb)
 
 
-@c.on_callback_query(callback_starts("linkchat_status"))
+@c.on_callback_query(filters.regex("^linkchat_status"))
 async def linkchat_status(client, message):
     _, chat, new_status = message.data.split()
     chat = int(chat)

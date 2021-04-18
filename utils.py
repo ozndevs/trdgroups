@@ -31,9 +31,5 @@ def migrate_chat(old_chat, new_chat):
     con.commit()
 
 
-def callback_starts(data: str or bytes):
-    return filters.create(lambda flt, cb: cb.data.split()[0] == flt.data, "CallbackStartsFilter", data=data)
-
-
 def get_switch(status: bool or int):
     return "✅ ON" if status else "☑️ OFF"
