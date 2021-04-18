@@ -1,2 +1,3 @@
-git+https://github.com/pyrogram/pyrogram@asyncio-dev
+pyrogram>=1.2.9,<1.3.0
+tgcrypto
 apscheduler

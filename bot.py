@@ -1,7 +1,8 @@
 from distutils.util import strtobool
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from pyrogram import Client, Filters, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 from config import TOKEN, API_ID, API_HASH, TRD_CHAT, VERSION, SUDOERS
 from db import add_point, get_trending, valid_point, get_configs, change_configs
@@ -19,8 +20,8 @@ async def is_admin(chat_id, user_id):
         return False
 
 
-@c.on_message(Filters.command("start") & Filters.private)
-@c.on_callback_query(Filters.callback_data("start_back"))
+@c.on_message(filters.command("start") & filters.private)
+@c.on_callback_query(filters.regex("start_back"))
 async def start(client, message):
     if isinstance(message, CallbackQuery):
         send = message.message.edit_text
@@ -41,7 +42,7 @@ async def start(client, message):
                reply_markup=kb)
 
 
-@c.on_callback_query(Filters.callback_data("rate_bot"))
+@c.on_callback_query(filters.regex("rate_bot"))
 async def rate_bot(client, message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("🙂 Bom", callback_data="rate_callback good")] +
@@ -57,8 +58,8 @@ async def rate_bot(client, message):
                reply_markup=kb)
 
 
-@c.on_message(Filters.command("trending") & Filters.private)
-@c.on_callback_query(Filters.callback_data("update_trd"))
+@c.on_message(filters.command("trending") & filters.private)
+@c.on_callback_query(filters.regex("update_trd"))
 async def trending(client, message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("🔁 Atualizar", callback_data="update_trd")]
@@ -82,7 +83,7 @@ async def trending(client, message):
     await send(msg, reply_markup=kb, disable_web_page_preview=True)
 
 
-@c.on_message(Filters.command("banchat", "!") & Filters.user(SUDOERS))
+@c.on_message(filters.command("banchat", "!") & filters.user(SUDOERS))
 async def banchat(client, message):
     m = await message.reply_text(f"Banindo o chat {message.command[1]}...")
     try:
@@ -100,7 +101,7 @@ async def banchat(client, message):
             f"Chat {chat.title} (`{chat.id}`) banido com sucesso. Seus pontos não irão ser contados mais e não serão exibidos nos trendings.")
 
 
-@c.on_message(Filters.command("unbanchat", "!") & Filters.user(SUDOERS))
+@c.on_message(filters.command("unbanchat", "!") & filters.user(SUDOERS))
 async def banchat(client, message):
     m = await message.reply_text(f"Desbanindo o chat {message.command[1]}...")
     try:
@@ -117,7 +118,7 @@ async def banchat(client, message):
         await m.edit_text(f"Chat {chat.title} (`{chat.id}`) desbanido com sucesso.")
 
 
-@c.on_message(Filters.command("settings") & Filters.group)
+@c.on_message(filters.command("settings") & filters.group)
 async def settings(client, message):
     configs = get_configs(message.chat.id)
     if await is_admin(message.chat.id, message.from_user.id):
@@ -142,7 +143,7 @@ async def settings(client, message):
             await message.reply_text("Eu enviei uma mensagem privada com as configs deste grupo.")
 
 
-@c.on_message(Filters.command(["rank", "stats"]) & Filters.group)
+@c.on_message(filters.command(["rank", "stats"]) & filters.group)
 async def rank(client, message):
     trd = get_trending(999999999)
     for pos, chat in enumerate(trd):
@@ -159,14 +160,14 @@ async def rank(client, message):
         return await message.reply_text(f"Este grupo ainda não tem dados de pontuação aqui.")
 
 
-@c.on_callback_query(Filters.callback_data("notify_help"))
+@c.on_callback_query(filters.regex("notify_help"))
 async def notify_help(client, message):
     await message.answer(
         "🛎 Notificar\n\nEsta configuração define se o bot deve enviar uma mensagem no grupo caso o mesmo estiver no top 10 dos trendings.",
         show_alert=True)
 
 
-@c.on_callback_query(Filters.callback_data("linkchat_help"))
+@c.on_callback_query(filters.regex("linkchat_help"))
 async def linkchat_help(client, message):
     await message.answer(
         "🔗 Linkar grupo\n\nEsta configuração define se o bot deve incluir um link (público) para o grupo caso ele aparecer nos trendings.",
@@ -215,7 +216,7 @@ async def linkchat_status(client, message):
     await message.message.edit_text("Painel de controle para o grupo " + configs["title"], reply_markup=kb)
 
 
-@c.on_callback_query(Filters.callback_data("rules"))
+@c.on_callback_query(filters.regex("rules"))
 async def regras(client, message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("« Voltar", callback_data="start_back")]
@@ -233,7 +234,7 @@ Caso tenha um grupo desses em nosso sistema, ele poderá ser excluído do mesmo 
 **Obrigado por ser um colaborador do nosso bot 🥰**""", reply_markup=kb)
 
 
-@c.on_callback_query(Filters.callback_data("infos"))
+@c.on_callback_query(filters.regex("infos"))
 async def infos(client, message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("« Voltar", callback_data="start_back")]
@@ -247,7 +248,7 @@ Org: OZN""",
                                     reply_markup=kb)
 
 
-@c.on_callback_query(Filters.callback_data("help"))
+@c.on_callback_query(filters.regex("help"))
 async def help(client, message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("« Voltar", callback_data="start_back")]
@@ -265,7 +266,7 @@ OBS: Caso você precise de ajuda para usar o bot, sinta-se à vontade para nos c
     await message.message.edit_text(text, reply_markup=kb)
 
 
-@c.on_message(Filters.group | Filters.migrate_from_chat_id, group=-1)
+@c.on_message(filters.group | filters.migrate_from_chat_id, group=-1)
 async def process_msg(client, message):
     if message.migrate_from_chat_id:
         migrate_chat(message.migrate_from_chat_id, message.chat.id)

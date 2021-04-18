@@ -1,5 +1,5 @@
 from db import cur, con
-from pyrogram import Filters
+from pyrogram import filters
 
 
 def generate_msg(sql_chats):
@@ -32,7 +32,7 @@ def migrate_chat(old_chat, new_chat):
 
 
 def callback_starts(data: str or bytes):
-    return Filters.create(lambda flt, cb: cb.data.split()[0] == flt.data, "CallbackStartsFilter", data=data)
+    return filters.create(lambda flt, cb: cb.data.split()[0] == flt.data, "CallbackStartsFilter", data=data)
 
 
 def get_switch(status: bool or int):
