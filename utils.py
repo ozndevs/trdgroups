@@ -15,7 +15,9 @@ def generate_msg(sql_chats):
         else:
             prefix = "🌟"
         if chat[4] and chat[5]:
-            msg.append(f"{prefix}: [{chat[0]}](https://t.me/{chat[5]}) ({chat[2]} pontos)")
+            msg.append(
+                f"{prefix}: [{chat[0]}](https://t.me/{chat[5]}) ({chat[2]} pontos)"
+            )
         else:
             msg.append(f"{prefix}: {chat[0]} ({chat[2]} pontos)")
     return "\n".join(msg)
@@ -27,7 +29,9 @@ def clear_db():
 
 
 def migrate_chat(old_chat, new_chat):
-    cur.execute("UPDATE trd_chats SET chat_id = ? WHERE chat_id = ?", (new_chat, old_chat))
+    cur.execute(
+        "UPDATE trd_chats SET chat_id = ? WHERE chat_id = ?", (new_chat, old_chat)
+    )
     con.commit()
 
 
