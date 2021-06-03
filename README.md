@@ -14,8 +14,12 @@ sudo apt install python3
 sudo apt install python3-pip
 
 # PIP
-pip3 install amanobot
-pip3 install 
+pip3 install pyrogram
+pip3 install tgcrypto
+pip3 install apscheduler
 
 # Executar 
-screen python3 bot.py
+screen python3 bot.py ou python3 bot.py 
+ou nohup python3 bot.py
+
+Bot testado na versão 18.04 or 20.04LTS UBUNTU
